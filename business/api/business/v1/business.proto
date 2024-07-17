@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package api.business.v1;
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "business/api/business/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.review.v1";
+
+// 商家端的服务
+service Business{
+    // 商家回复用户评价
+    rpc ReplyReview(ReplyReviewRequest)returns(ReplyReviewResponse){
+        option (google.api.http)={
+            post: "business/v1/review/reply",
+            body: "*",
+        };
+    };
+    // 商家对用户评价进行申诉
+    rpc AppealReview(AppealReviewRequest)returns(AppealReviewReply){
+        option (google.api.http)={
+            post:"business/v1/review/appeal",
+            body:"*",
+        };
+    }
+    // 商家的其他业务...
+}
+
+// 商家回复用户评价的请求体
+message ReplyReviewRequest{
+    int64 reviewID=1 [(validate.rules).int64 = {gt:0}];
+    int64 storeID=2 [(validate.rules).int64 = {gt:0}];
+    string content =3 [(validate.rules).string = {min_len:2,max_len:200}];
+    string picInfo =4;
+    string videoInfo=5;
+}
+
+// 商家回复用户评价的响应体
+message ReplyReviewResponse{
+    int64 replyId=1;
+}
+
+// 商家对用户违规评价申诉的请求
+message AppealReviewRequest{
+    int64 reviewID=1 [(validate.rules).int64 = {gt:0}];
+    int64 storeID=2 [(validate.rules).int64 ={gt:0}];
+    string reason=3 [(validate.rules).string = {min_len:2,max_len:200}];
+    string content=4 [(validate.rules).string ={min_len:2,max_len:200}]; 
+    string picInfo=5;
+    string videoInfo=6;
+}
+
+// 商家对用户违规评价申诉的响应
+message AppealReviewReply{
+    int64 appealID=1;
+}

@@ -1,0 +1,3 @@
+consul:
+  address: 127.0.0.1:8500 #Consul的地址
+  scheme: http #Consul通信方式
