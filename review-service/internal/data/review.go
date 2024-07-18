@@ -186,6 +186,7 @@ func (r reviewRepo) AppealReview(ctx context.Context, param *biz.AppealParam) (*
 // AppealReview operator运营对商家的申诉进行处理
 func (r reviewRepo) AuditAppeal(ctx context.Context, param *biz.AuditAppealParam) error {
 	// 1.判断请求是否合法
+	fmt.Println(param)
 	// 1.1 appeal记录是否存在
 	_, err := r.data.query.ReviewAppealInfo.WithContext(ctx).Where(r.data.query.ReviewAppealInfo.AppealID.Eq(param.AppealID)).First()
 	if err != nil {
@@ -198,6 +199,7 @@ func (r reviewRepo) AuditAppeal(ctx context.Context, param *biz.AuditAppealParam
 			map[string]interface{}{
 				"status":  param.Status,
 				"op_user": param.OpUser,
+				// op_reason:param居然没设置op_reason
 			}); err != nil {
 			return err
 		}
