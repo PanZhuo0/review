@@ -40,6 +40,7 @@ func (s *ReviewService) CreateReview(ctx context.Context, req *pb.CreateReviewRe
 	retReview, err := s.uc.CreateReview(ctx, &model.ReviewInfo{ //调用biz层的方法
 		OrderID:      req.OrderID,      //订单ID
 		UserID:       req.UserID,       //用户ID
+		StoreID:      req.StoreID,      //商家ID
 		Score:        req.Score,        //评价评分
 		ExpressScore: req.ExpressScore, //物流评分
 		Content:      req.Content,      //评价内容
@@ -174,13 +175,13 @@ func (s *ReviewService) ListReviewByUserID(ctx context.Context, req *pb.ListRevi
 // ListReviewByStoreID 获取商户所有被评价信息,传入参数为StoreID、Page页码、Size每页的内容条数
 func (s *ReviewService) ListReviewByStoreID(ctx context.Context, req *pb.ListReviewByStoreIDRequest) (*pb.ListReviewByStoreIDReply, error) {
 	fmt.Printf("[service] ListReviewByStoreID req:%v\n", req)
-	reviews, err := s.uc.ListReviewByStoreID(ctx, req.GetStoreID(), int(req.GetPage()), int(req.GetSize()))
+	myReviews, err := s.uc.ListReviewByStoreID(ctx, req.GetStoreID(), int(req.GetPage()), int(req.GetSize()))
 	if err != nil {
 		return nil, err
 	}
 	// 封装结果返回
-	list := make([]*pb.ReviewInfo, 0, len(reviews))
-	for _, v := range reviews {
+	list := make([]*pb.ReviewInfo, 0, len(myReviews))
+	for _, v := range myReviews {
 		list = append(list, &pb.ReviewInfo{
 			ReviewID:     v.ReviewID,
 			UserID:       v.UserID,

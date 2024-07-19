@@ -81,6 +81,8 @@ func (jw JobWorker) Start(ctx context.Context) error {
 		}
 		// jw.log.Debugf("message at topic/partition/offset %v/%v/%v: %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
 		// 2. 将完整评价数据写入ES
+		fmt.Println("从KAFKA中获取的MSG的信息", string(m.Value))
+		fmt.Println("------")
 		msg := new(Msg)
 		if err := json.Unmarshal(m.Value, msg); err != nil {
 			jw.log.Errorf("unmarshal msg from kafka failed, err:%v", err)
@@ -117,6 +119,8 @@ func (jw JobWorker) Stop(context.Context) error {
 // indexDocument 索引文档
 func (jw JobWorker) indexDocument(d map[string]interface{}) {
 	reviewID := d["review_id"].(string)
+	fmt.Println(reviewID)
+	fmt.Println(d)
 	// 添加文档
 	resp, err := jw.esClient.client.Index(jw.esClient.index).
 		Id(reviewID).

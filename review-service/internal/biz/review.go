@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	v1 "review-service/api/review/v1"
 	"review-service/internal/data/model"
 	"review-service/pkg/snowflake"
@@ -49,7 +50,7 @@ func (uc ReviewUsecase) CreateReview(ctx context.Context, review *model.ReviewIn
 	}
 	if len(reviews) > 0 {
 		// 1.2如果用户已经对该Order进行了评价,则直接返回
-		return nil, v1.ErrorOrderReviewed("订单号:%d的订单已经评价过", review.OrderID)
+		return nil, v1.ErrorOrderReviewed("订单号:%d已做过评价", review.OrderID)
 	}
 	// 2.生成reviewID(使用雪花算法生成)
 	reviewID := snowflake.GenID()
@@ -138,35 +139,38 @@ func (uc ReviewUsecase) ListReviewByStoreID(ctx context.Context, storeID int64, 
 	return uc.repo.ListReviewByStoreID(ctx, storeID, offset, limit)
 }
 
+// 解决时间的JSON解析问题
 type MyReviewInfo struct {
 	*model.ReviewInfo
-	CreateAt     MyTime `json:"create_at"` // 创建时间
-	UpdateAt     MyTime `json:"update_at"` // 创建时间
-	Anonymous    int32  `json:"anonymous,string"`
-	Score        int32  `json:"score,string"`
-	ServiceScore int32  `json:"service_score,string"`
-	ExpressScore int32  `json:"express_score,string"`
-	HasMedia     int32  `json:"has_media,string"`
-	Status       int32  `json:"status,string"`
-	IsDefault    int32  `json:"is_default,string"`
-	HasReply     int32  `json:"has_reply,string"`
-	ID           int64  `json:"id,string"`
-	Version      int32  `json:"version,string"`
-	ReviewID     int64  `json:"review_id,string"`
-	OrderID      int64  `json:"order_id,string"`
-	SkuID        int64  `json:"sku_id,string"`
-	SpuID        int64  `json:"spu_id,string"`
-	StoreID      int64  `json:"store_id,string"`
-	UserID       int64  `json:"user_id,string"`
+	CreateAt MyTime `json:"create_at"` // 创建时间,时间类型需要重写UnmarshalJSON方法
+	UpdateAt MyTime `json:"update_at"` // 创建时间,时间类型需要重写UnmarshalJSON方法
+	// DeleteAt     *time.Time `json:"delete_at"` // 删除时间
+	Anonymous    int32 `json:"anonymous,string"` // int32类型的字段需要，string 标记，标记这些数据是从json的string类型反序列化到int32
+	Score        int32 `json:"score,string"`
+	ServiceScore int32 `json:"service_score,string"`
+	ExpressScore int32 `json:"express_score,string"`
+	HasMedia     int32 `json:"has_media,string"`
+	Status       int32 `json:"status,string"`
+	IsDefault    int32 `json:"is_default,string"`
+	HasReply     int32 `json:"has_reply,string"`
+	ID           int64 `json:"id,string"`
+	Version      int32 `json:"version,string"`
+	ReviewID     int64 `json:"review_id,string"`
+	OrderID      int64 `json:"order_id,string"`
+	SkuID        int64 `json:"sku_id,string"`
+	SpuID        int64 `json:"spu_id,string"`
+	StoreID      int64 `json:"store_id,string"`
+	UserID       int64 `json:"user_id,string"`
 }
 
 type MyTime time.Time
 
 // MyTime类型的Unmarshal方法,json.unmarshal时会自动调用该方法
-func (t *MyTime) UnmarshalJson(data []byte) error {
+func (t *MyTime) UnmarshalJSON(data []byte) error {
 	// data = "\"2023-12-17 14:20:18\""
 	s := strings.Trim(string(data), `"`)
-	tmp, err := time.Parse("2006-01-02 15:04:05", s)
+	fmt.Println("string:", s)
+	tmp, err := time.Parse("2006-01-02 15:04:05", s) //以这种形式解析
 	if err != nil {
 		return err
 	}

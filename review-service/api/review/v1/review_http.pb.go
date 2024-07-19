@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.7.3
 // - protoc             v3.20.1
-// source: api/review/v1/review.proto
+// source: review/v1/review.proto
 
 package v1
 
@@ -38,7 +38,7 @@ type ReviewHTTPServer interface {
 	CreateReview(context.Context, *CreateReviewRequest) (*CreateReviewReply, error)
 	// GetReview C端获取评价详情
 	GetReview(context.Context, *GetReviewRequest) (*GetReviewReply, error)
-	// ListReviewByUserID C端查看userID下所有评价
+	// ListReviewByUserID C端查看userID下所有评价(使用ES)
 	ListReviewByUserID(context.Context, *ListReviewByUserIDRequest) (*ListReviewByUserIDReply, error)
 	// ReplyReview B端回复评价
 	ReplyReview(context.Context, *ReplyReviewRequest) (*ReplyReviewReply, error)

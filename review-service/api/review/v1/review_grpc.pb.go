@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.20.1
-// source: api/review/v1/review.proto
+// source: review/v1/review.proto
 
 package v1
 
@@ -34,9 +34,9 @@ type ReviewClient interface {
 	AppealReview(ctx context.Context, in *AppealReviewRequest, opts ...grpc.CallOption) (*AppealReviewReply, error)
 	// O端评价申诉审核
 	AuditAppeal(ctx context.Context, in *AuditAppealRequest, opts ...grpc.CallOption) (*AuditAppealReply, error)
-	// C端查看userID下所有评价
+	// C端查看userID下所有评价(使用ES)
 	ListReviewByUserID(ctx context.Context, in *ListReviewByUserIDRequest, opts ...grpc.CallOption) (*ListReviewByUserIDReply, error)
-	// 根据商家ID查询评价列表（分页）
+	// 根据商家ID查询评价列表（分页）(使用ES)
 	ListReviewByStoreID(ctx context.Context, in *ListReviewByStoreIDRequest, opts ...grpc.CallOption) (*ListReviewByStoreIDReply, error)
 }
 
@@ -136,9 +136,9 @@ type ReviewServer interface {
 	AppealReview(context.Context, *AppealReviewRequest) (*AppealReviewReply, error)
 	// O端评价申诉审核
 	AuditAppeal(context.Context, *AuditAppealRequest) (*AuditAppealReply, error)
-	// C端查看userID下所有评价
+	// C端查看userID下所有评价(使用ES)
 	ListReviewByUserID(context.Context, *ListReviewByUserIDRequest) (*ListReviewByUserIDReply, error)
-	// 根据商家ID查询评价列表（分页）
+	// 根据商家ID查询评价列表（分页）(使用ES)
 	ListReviewByStoreID(context.Context, *ListReviewByStoreIDRequest) (*ListReviewByStoreIDReply, error)
 	mustEmbedUnimplementedReviewServer()
 }
@@ -369,5 +369,5 @@ var Review_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/review/v1/review.proto",
+	Metadata: "review/v1/review.proto",
 }

@@ -52,14 +52,14 @@ service Review {
 			body: "*"
 		};
 	}
-	// C端查看userID下所有评价 
+	// C端查看userID下所有评价(使用ES)
 	rpc ListReviewByUserID (ListReviewByUserIDRequest) returns (ListReviewByUserIDReply) {
 		option (google.api.http) = {
 			get: "/v1/{userID}/reviews",
 		};
 	}
 
-	// 根据商家ID查询评价列表（分页）
+	// 根据商家ID查询评价列表（分页）(使用ES)
 	rpc ListReviewByStoreID (ListReviewByStoreIDRequest) returns (ListReviewByStoreIDReply) {}
 }
 

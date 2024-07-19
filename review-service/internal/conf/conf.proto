@@ -9,6 +9,7 @@ message Bootstrap {
   Server server = 1;
   Data data = 2;
   Snowflake snowflake =3;
+  ES es=4;
 }
 
 // 雪花算法需要的配置
@@ -54,4 +55,8 @@ message Registry{
     string scheme =2;
   }
   Consul consul=1;
+}
+
+message ES{
+  repeated string address=1;
 }

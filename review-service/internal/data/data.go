@@ -7,23 +7,27 @@ import (
 	"review-service/internal/data/query"
 	"strings"
 
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis"
 	"github.com/google/wire"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewReviewRepo, NewDB)
+var ProviderSet = wire.NewSet(NewData, NewReviewRepo, NewDB, NewES, NewRdbClient)
 
 // Data .
 type Data struct {
 	// TODO wrapped database client
 	query *query.Query
+	es    *elasticsearch.TypedClient
+	rdb   *redis.Client
 }
 
 // NewData .
-func NewData(db *gorm.DB, logger log.Logger) (*Data, func(), error) {
+func NewData(db *gorm.DB, es *elasticsearch.TypedClient, rdb *redis.Client, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
@@ -31,9 +35,28 @@ func NewData(db *gorm.DB, logger log.Logger) (*Data, func(), error) {
 	query.SetDefault(db)
 	return &Data{
 		query: query.Q,
+		es:    es,
+		rdb:   rdb,
 	}, cleanup, nil
 }
 
+func NewRdbClient(cfg *conf.Data) *redis.Client {
+	return redis.NewClient(&redis.Options{
+		Addr:         cfg.Redis.Addr,
+		WriteTimeout: cfg.Redis.ReadTimeout.AsDuration(),
+		ReadTimeout:  cfg.Redis.WriteTimeout.AsDuration(),
+	})
+}
+
+func NewES(cfg *conf.ES) (*elasticsearch.TypedClient, error) {
+	c, err := elasticsearch.NewTypedClient(elasticsearch.Config{
+		Addresses: cfg.GetAddress(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func NewDB(c *conf.Data) (*gorm.DB, error) {
 	// 从配置文件中获取数据库连接
 	driver := c.Database.Driver
