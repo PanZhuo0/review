@@ -2,7 +2,7 @@
 
 ##### 项目整体架构-CQRS
 
-![image-20240723121850328](C:\Users\PZ\AppData\Roaming\Typora\typora-user-images\image-20240723121850328.png)
+![image-20240723121850328](https://github.com/PanZhuo0/review/blob/main/pic/image-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84.png)
 
 外部用户可以通过API-gateway借助`review-c`访问`review-service`的服务
 
@@ -10,17 +10,17 @@
 
 - 查询流程以按商家ID查询为例
 
-![image-20240723131910931](C:\Users\PZ\AppData\Roaming\Typora\typora-user-images\image-20240723131910931.png)
+![image-20240723131910931](https://github.com/PanZhuo0/review/blob/main/pic/image-%E6%9F%A5%E8%AF%A2.png)
 
 - CUD
 
-![image-20240723132823478](C:\Users\PZ\AppData\Roaming\Typora\typora-user-images\image-20240723132823478.png)
+![image-20240723132823478](https://github.com/PanZhuo0/review/blob/main/pic/image-CUD.png)
 
 对评价的增删改操作将会直接操作MySQL数据库
 
 - 数据一致性
 
-![image-20240723133058888](C:\Users\PZ\AppData\Roaming\Typora\typora-user-images\image-20240723133058888.png)
+![image-20240723133058888](https://github.com/PanZhuo0/review/blob/main/pic/image-%E4%B8%80%E8%87%B4%E6%80%A7.png)
 
 1.通过canal从MySQL中获取binlog日志、发往Kafka
 
